@@ -25,7 +25,6 @@ const verifyToken = (req, res, next) =>{
     }
 }
 
-
 const addUser = (req, res) =>{
     const data = req.body;
     jwt.verify(req.token, 'secretkey', async (error) =>{

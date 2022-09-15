@@ -5,9 +5,9 @@ const { getStudents, getOneStudent, addStudent, modifyStudent, deleteStudent } =
 const {verifyToken} = require('../controllers/users.controller')
 
 router.get('/students', verifyToken, getStudents);
-router.get('/students/:id', verifyToken, getOneStudent);
+router.get('/students/:document_num', verifyToken, getOneStudent);
 router.post('/students',verifyToken, addStudent);
-router.put('/students/:id', verifyToken, modifyStudent);
-router.delete('/students/:id', verifyToken, deleteStudent);
+router.put('/students/:document_num', verifyToken, modifyStudent);
+router.delete('/students/:document_num', verifyToken, deleteStudent);
 
 module.exports = router; 

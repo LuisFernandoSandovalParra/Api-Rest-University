@@ -6,11 +6,11 @@ const jwt = require('jsonwebtoken');
 
 
 const getStudentCareer = (req, res) => {
-    const {id} = req.params;
+    const {document_num} = req.params;
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             try {
-                const result = await connection.query(`Select concat(s.first_name, ' ', s.last_name) as full_name, c.name  from students s, careers c, students_careers sc where sc.student_id = ${connection.escape(id)} and sc.student_id = s.id and c.id = sc.career_id`);
+                const result = await connection.query(`Select s.document_type, s.document_num, concat(s.first_name, ' ', s.last_name) as full_name, c.name  from students s, careers c, students_careers sc where sc.student_document_num = ${connection.escape(document_num)} and sc.student_document_num = s.document_num and c.snies_code = sc.career_snies_code`);
                 res.json(result);
             } catch (error) {
                 res.json({message: `Ha ocurrido un error: ${error}`});
@@ -22,11 +22,11 @@ const getStudentCareer = (req, res) => {
 }
 
 const getAllStudentsPerCareer = (req, res) => {
-    const {id} = req. params;
+    const {snies_code} = req.params;
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             try {
-                const result = await connection.query(`select concat(s.first_name, ' ', s.last_name) as full_name, c.name from students s, careers c, students_careers sc where sc.career_id = ${connection.escape(id)} and sc.career_id = c.id and s.id = sc.student_id`);
+                const result = await connection.query(`select s.document_type, s.document_num, concat(s.first_name, ' ', s.last_name) as full_name, c.name as career from students s, careers c, students_careers sc where sc.career_snies_code = ${connection.escape(snies_code)} and sc.career_snies_code = c.snies_code and s.document_num = sc.student_document_num`);
                 res.json(result);
             } catch (error) {
                 res.json({message: `Ha ocurrido un error: ${error}`})
@@ -42,7 +42,7 @@ const assingCareer = (req, res) => {
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             try{
-                const result = await connection.query(`insert into students_career (student_id, career_id) values (${connection.escape(data.student_id)}, ${connection.escape(data.career_id)})`);
+                const result = await connection.query(`insert into students_careers (student_document_num, career_snies_code) values (${connection.escape(data.student_document_num)}, ${connection.escape(data.career_snies_code)})`);
                 res.json({message: `Se inscribío correctamente el estudiante a la carrera.`});
             }catch(error){
                 res.json({message: `Ha ocurrido un error: ${error}`});
@@ -54,12 +54,13 @@ const assingCareer = (req, res) => {
 }
 
 const changeToCareer = (req, res) => {
-    const {id} = req.params;
-    const {career_id} = req.body;
+    const {document_num} = req.params;
+    const {career_snies_code} = req.body;
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             try {
-                const result = await connection.query(`Update students_careers set career_id = ${connection.escape(career_id)} where student_id = ${connection.escape(id)}`);
+                const result = await connection.query(`Update students_careers set career_snies_code = ${connection.escape(career_snies_code)} where student_document_num = ${connection.escape(document_num)}`);
+                res.json({message: "El estudiante ha cambiado exitosamente de carrera."})
             } catch (error) {
                 res.json({message: `Ha ocurrido un error: ${error}`});
             }
@@ -70,11 +71,11 @@ const changeToCareer = (req, res) => {
 }
 
 const deleteStudentToCareer = (req, res) => {
-    const {id} = req. params;
+    const {document_num} = req.params;
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             try {
-                const result = await connection.query(`delete from students_careers where student_id = ${connection.escape(id)}`);
+                const result = await connection.query(`delete from students_careers where student_document_num = ${connection.escape(document_num)}`);
                 res.json({message: 'Se ha eliminado correctamente el estudiante de la carrera.'});
             } catch (error) {
                 res.json({message: `Ha ocurrido un error: ${error}`});
