@@ -5,7 +5,7 @@ const { addUser, deleteUser, getUser, validateUser } = require('../controllers/u
 
 router.post('/login/:id', validateUser);
 router.post('/users', verifyToken, addUser);
-router.get('/users/:id', verifyToken, getUser);
-router.delete('/users/:id', verifyToken, deleteUser);
+router.get('/users/:email', verifyToken, getUser);
+router.delete('/users/:email', verifyToken, deleteUser);
 
 module.exports = router;

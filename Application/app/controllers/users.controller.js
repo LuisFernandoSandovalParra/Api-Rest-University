@@ -29,11 +29,16 @@ const addUser = (req, res) =>{
     const data = req.body;
     jwt.verify(req.token, 'secretkey', async (error) =>{
         if(!error){
-            try {
-                const result = await connection.query(`Insert into users (name, email) values (${connection.escape(data.name)}, ${connection.escape(data.email)})`);
-                res.json({message: "Usuario creado correctamente."})
-            }catch (error) {
-                res.json({message: `Ha ocurrido un error: ${error}`});
+            let queryValidate = await connection.query(`SELECT name FROM users WHERE email = ${connection.escape(data.email)};`)
+            if(queryValidate.length === 0){
+                try {
+                    const result = await connection.query(`Insert into users (name, email) values (${connection.escape(data.name)}, ${connection.escape(data.email)})`);
+                    res.json({message: "Usuario creado correctamente."})
+                }catch (error) {
+                    res.json({message: `Ha ocurrido un error: ${error}`});
+                }
+            }else{
+                res.json({message: "No se pudo ingresar el usuario, ya existe."})
             }
         }else{
             res.sendStatus(403);
@@ -42,15 +47,20 @@ const addUser = (req, res) =>{
 }
 
 const deleteUser = (req, res) =>{
-    const {id} = req.params;
+    const {email} = req.params;
     jwt.verify(req.token, 'secretkey', async (error) =>{
         if(!error){
-            try {
-                const result = await connection.query(`Delete from users where id = ${connection.escape(id)}`);
-                res.json({message:"Usuario eliminado correctamente."})
-            }catch (error) {
-                res.json({message: `Ha ocurrido un error: ${error}`});
-            }
+            let queryValidate = await connection.query(`SELECT name FROM users WHERE email = ${connection.escape(email)}`);
+            if(queryValidate.length === 1){
+                try {
+                    const result = await connection.query(`Delete from users where email = ${connection.escape(email)}`);
+                    res.json({message:"Usuario eliminado correctamente."})
+                }catch (error) {
+                    res.json({message: `Ha ocurrido un error: ${error}`});
+                }
+            }else{
+                res.json({message: "El usuario que intenta eliminar no existe."})
+            }   
         }else{
             res.sendStatus(403);
         }
@@ -58,12 +68,16 @@ const deleteUser = (req, res) =>{
 }
 
 const getUser = async (req, res) =>{
-    const {id} = req.params;
+    const {email} = req.params;
     jwt.verify(req.token, 'secretkey', async (error, authData) =>{
         if(!error){
             try {
-                const result = await connection.query(`Select * from users where id = ${connection.escape(id)}`);
-                res.json(result);
+                const result = await connection.query(`Select * from users where email = ${connection.escape(email)}`);
+                if(result.length === 1){
+                    res.json(result);
+                }else{
+                    res.json({message: "El usuario que busca no existe."})
+                }
             } catch (error) {
                 res.json({message: `Ha ocurrido un error: ${error}`});
             }
