@@ -1,5 +1,5 @@
-const mariadb = require('mariadb');
 require('dotenv').config();
+const mariadb = require('mariadb');
 
 const config = {
     host: process.env.HOST_DB,
