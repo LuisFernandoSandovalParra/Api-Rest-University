@@ -1,14 +1,14 @@
 'use strict'
 
 const {json} = require('express');
-const connection = require('../../confing/connection.js');
+const connection = require('../../config/connection.js');
 const jwt = require('jsonwebtoken');
 
 
 const validateUser = async (req, res) =>{
     const {id} = req.params;
     const user = await connection.query(`Select * from users where id = ${connection.escape(id)}`);
-    jwt.sign({user}, 'secretkey', {expiresIn: '2h'}, (err, token) => {
+    jwt.sign({user}, 'secretkey', (err, token) => {
         res.json({token});
     });
 }

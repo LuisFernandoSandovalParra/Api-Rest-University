@@ -1,7 +1,7 @@
 'use strict'
 
 const {json} = require('express');
-const connection = require('../../confing/connection.js');
+const connection = require('../../config/connection.js');
 const jwt = require('jsonwebtoken');
 
 
@@ -72,7 +72,7 @@ const changeToCareer = (req, res) => {
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             let queryValidate = await connection.query(`SELECT * FROM students_careers WHERE student_document_num = ${connection.escape(document_num)}`);
-            if(queryValidate === 1){
+            if(queryValidate.length === 1){
                 try {
                     const result = await connection.query(`Update students_careers set career_snies_code = ${connection.escape(career_snies_code)} where student_document_num = ${connection.escape(document_num)}`);
                     res.json({message: "El estudiante ha cambiado exitosamente de carrera."})
@@ -93,7 +93,7 @@ const deleteStudentToCareer = (req, res) => {
     jwt.verify(req.token, 'secretkey', async (error) => {
         if(!error){
             let queryValidate = await connection.query(`SELECT * FROM students_careers WHERE student_document_num = ${connection.escape(document_num)}`);
-            if(queryValidate === 1){
+            if(queryValidate.length === 1){
                 try {
                     const result = await connection.query(`delete from students_careers where student_document_num = ${connection.escape(document_num)}`);
                     res.json({message: 'Se ha eliminado correctamente el estudiante de la carrera.'});

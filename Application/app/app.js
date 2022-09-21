@@ -1,7 +1,9 @@
 'use strict'
 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+
 
 const studentsRoutes = require('./routes/students.route.js');
 const careersRoutes = require('./routes/careers.route.js');
@@ -12,7 +14,7 @@ const studentsCareer = require('./routes/studentsCareers.route.js');
 const app = express();
 
 //settings
-app.set('port', (process.env.PORT || 9005));
+app.set('port', (process.env.PORT));
 
 //middlewares
 app.use(express.urlencoded({extended: false}));
